@@ -219,6 +219,10 @@ class TestAuthRestApi(unittest.TestCase):
 
         del_account_identity(PUBLIC_KEY, IdentityType.SSH, root)
 
+    def test_ssh_key_without_padding(self):
+        """AUTHENTICATION (REST): """
+        pytest.fail('Waiting for https://github.com/rucio/rucio/pull/4033 to be merged')
+
     def test_ssh_fail(self):
         """AUTHENTICATION (REST): SSH RSA public key exchange (wrong credentials)."""
 
