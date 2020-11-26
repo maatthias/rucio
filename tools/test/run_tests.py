@@ -104,9 +104,8 @@ def main():
 
     if parallel:
         with multiprocessing.Pool(processes=min(int(os.environ.get('PARALLEL_AUTOTESTS_PROCNUM', 3)), len(cases)), maxtasksperchild=1) as prpool:
-            tasks = [(_case, prpool.apply_async(run_case_logger, (),
-                                                {'run_case_kwargs': gen_case_kwargs(_case),
-                                                 'stdlog': logs_dir / f'log-{case_id(_case)}.txt'})) for _case in cases]
+            prepared_tasks = [(_case, {'run_case_kwargs': gen_case_kwargs(_case), 'stdlog': logs_dir / f'log-{case_id(_case)}.txt'}) for _case in cases]
+            tasks = [(_case, prpool.apply_async(run_case_logger, (), _casekwargs)) for _case, _casekwargs in prepared_tasks]
             start_time = time.time()
             for _case, task in tasks:
                 timeleft = start_time + 21600 - time.time()  # 6 hour overall timeout
@@ -123,8 +122,9 @@ def main():
                     prpool.close()
                     sys.exit(1)
     else:
-        for _case in cases:
-            run_case(**gen_case_kwargs(_case))
+        _casekwargs = [gen_case_kwargs(_case) for _case in cases]
+        for kwargs in _casekwargs:
+            run_case(**kwargs)
 
 
 def run_case_logger(run_case_kwargs: typing.Dict, stdlog=sys.stderr):
@@ -148,7 +148,7 @@ def run_case_logger(run_case_kwargs: typing.Dict, stdlog=sys.stderr):
     else:
         sys.stderr = stdlog
         try:
-            print(startmsg, file=sys.stderr)
+            print(startmsg, file=sys.stderr, flush=True)
             run_case(**run_case_kwargs)
         except:
             traceback.print_exc(file=sys.stderr)

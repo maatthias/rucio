@@ -21,10 +21,10 @@ jobs:
         id: images
         shell: bash
         run: |
-          docker login https://docker.pkg.github.com -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+          docker login https://ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
           i=0; until [ "$i" -ge 3 ]; do
             IMAGES=$(echo '${{ steps.matrix.outputs.matrix }}' | ./tools/test/build_images.py --output list \
-                --build-no-cache --cache-repo docker.pkg.github.com/${{ github.repository }} --push-cache \
+                --build-no-cache --cache-repo ghcr.io/${{ github.repository }} --push-cache \
                 ./etc/docker/test || echo "")
             if [[ -n $IMAGES ]]; then break;
             else
@@ -32,5 +32,5 @@ jobs:
               echo "::warning::Building images failed, retrying…"
             fi
           done
-          docker logout https://docker.pkg.github.com
+          docker logout https://ghcr.io
           if [[ -z $IMAGES ]]; then echo "::error::Building images failed ultimately"; exit 1; fi
