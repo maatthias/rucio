@@ -25,6 +25,8 @@
 
 import unittest
 
+import pytest
+
 from rucio.common.config import config_get, config_get_bool
 from rucio.common.types import InternalAccount, InternalScope
 from rucio.common.utils import generate_uuid as uuid
@@ -40,6 +42,7 @@ from rucio.db.sqla.constants import DIDType
 from rucio.tests.test_rule import create_files, tag_generator
 
 
+@pytest.mark.noparallel(reason='sets account limits, adds global rse attributes')
 class TestJudgeEvaluator(unittest.TestCase):
 
     @classmethod

@@ -135,6 +135,7 @@ def check_rule_progress_callback(scope, name, progress, rule_id, session=None):
     return False
 
 
+@pytest.mark.noparallel(reason='empties database tables, sets account limits, adds global rse attributes')
 class TestReplicationRuleCore(unittest.TestCase):
 
     @classmethod

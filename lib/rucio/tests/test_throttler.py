@@ -23,6 +23,8 @@
 import unittest
 from datetime import datetime
 
+import pytest
+
 from rucio.common.config import config_get, config_get_bool, config_set, config_remove_option
 from rucio.common.types import InternalAccount, InternalScope
 from rucio.common.utils import generate_uuid
@@ -37,6 +39,8 @@ from rucio.db.sqla.constants import DIDType, RequestType, RequestState
 from rucio.tests.common import skiplimitedsql
 
 
+@pytest.mark.dirty
+@pytest.mark.noparallel(reason='deletes database content on setUp')
 class TestThrottlerGroupedFIFO(unittest.TestCase):
     """Throttler per destination RSE and on all activites per grouped FIFO
     """
@@ -397,8 +401,11 @@ class TestThrottlerGroupedFIFO(unittest.TestCase):
         # deadline check should not work for destination RSEs - only for reading
 
 
-# Throttler per destination RSE and on each activites per FIFO
+@pytest.mark.dirty
+@pytest.mark.noparallel(reason='deletes database content on setUp')
 class TestThrottlerFIFO(unittest.TestCase):
+    """Throttler per destination RSE and on each activites per FIFO
+    """
     db_session = None
 
     @classmethod
@@ -635,6 +642,8 @@ class TestThrottlerFIFO(unittest.TestCase):
         assert request2['state'] == RequestState.WAITING
 
 
+@pytest.mark.dirty
+@pytest.mark.noparallel(reason='deletes database content on setUp')
 class TestThrottlerFIFOSRCACT(unittest.TestCase):
     """Throttler per source RSE and on each activites per FIFO."""
 
@@ -756,6 +765,8 @@ class TestThrottlerFIFOSRCACT(unittest.TestCase):
         assert request3['state'] == RequestState.WAITING
 
 
+@pytest.mark.dirty
+@pytest.mark.noparallel(reason='deletes database content on setUp')
 class TestThrottlerFIFOSRCALLACT(unittest.TestCase):
     """Throttler per source RSE and on all activites per FIFO."""
 
@@ -849,6 +860,8 @@ class TestThrottlerFIFOSRCALLACT(unittest.TestCase):
         assert request2['state'] == RequestState.WAITING
 
 
+@pytest.mark.dirty
+@pytest.mark.noparallel(reason='deletes database content on setUp')
 class TestThrottlerFIFODESTALLACT(unittest.TestCase):
     """Throttler per destination RSE and on all activites per FIFO."""
 
@@ -972,6 +985,8 @@ class TestThrottlerFIFODESTALLACT(unittest.TestCase):
         assert request3['state'] == RequestState.WAITING
 
 
+@pytest.mark.dirty
+@pytest.mark.noparallel(reason='deletes database content on setUp')
 class TestThrottlerGroupedFIFOSRCALLACT(unittest.TestCase):
     """Throttler per source RSE and on all activites per grouped FIFO."""
 
@@ -1127,6 +1142,8 @@ class TestThrottlerGroupedFIFOSRCALLACT(unittest.TestCase):
         assert request_4['state'] == RequestState.WAITING
 
 
+@pytest.mark.dirty
+@pytest.mark.noparallel(reason='deletes database content on setUp')
 class TestRequestCoreRelease(unittest.TestCase):
     """Test release methods used in throttler."""
 

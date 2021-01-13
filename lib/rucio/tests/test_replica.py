@@ -683,6 +683,7 @@ def test_add_suspicious_replicas(replica_client):
     assert r == {'MOCK2': output}
 
 
+@pytest.mark.noparallel(reason='uses pre-defined rses, fails when run in parallel')
 def test_bad_replica_methods_for_UI(rest_client, auth_token):
     """ REPLICA (REST): Test the listing of bad and suspicious replicas """
     response = rest_client.get('/replicas/bad/states', headers=headers(auth(auth_token)))

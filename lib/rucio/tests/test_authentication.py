@@ -135,7 +135,6 @@ class TestAuthCoreApi(unittest.TestCase):
 
         del_account_identity(PUBLIC_KEY, IdentityType.SSH, root)
 
-    @pytest.mark.xfail(reason='The WebUI isn\'t linked to CERN SSO yet so this needs to be fixed once it is linked')
     def test_get_auth_token_saml_success(self):
         """AUTHENTICATION (CORE): SAML NameID (correct credentials)."""
         root = InternalAccount('root', **self.vo)

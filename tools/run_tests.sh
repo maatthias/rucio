@@ -140,7 +140,7 @@ fi
 for i in $iterations
 do
     echo 'Running test iteration' $i
-        echo python -bb -m pytest -vvvrxs $stop_on_failure $pytestextra
-        python -bb -m pytest -vvvrxs $stop_on_failure $pytestextra
+        echo tools/pytest.sh $stop_on_failure $pytestextra
+        tools/pytest.sh $stop_on_failure $pytestextra
     fi
 done

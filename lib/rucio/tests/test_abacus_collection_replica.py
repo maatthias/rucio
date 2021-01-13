@@ -25,6 +25,8 @@
 import os
 import unittest
 
+import pytest
+
 from rucio.client.didclient import DIDClient
 from rucio.client.replicaclient import ReplicaClient
 from rucio.client.ruleclient import RuleClient
@@ -44,6 +46,7 @@ from rucio.db.sqla.constants import DIDType, ReplicaState
 from rucio.tests.common import file_generator, rse_name_generator
 
 
+@pytest.mark.noparallel(reason='uses pre-defined RSE, fails when run in parallel')
 class TestAbacusCollectionReplica(unittest.TestCase):
     account = 'root'
     scope = 'mock'

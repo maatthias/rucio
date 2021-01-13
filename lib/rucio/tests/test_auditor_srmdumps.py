@@ -133,7 +133,6 @@ def test_sites_no_configuration_file(mock_ddmendpoint):
     assert pattern == 'dump_%Y%m%d'
 
 
-@pytest.mark.xfail
 def test_with_configuration_file():
     """ test_generate_url_returns_custom_url_for_sites_with_configuration_file"""
     config = ConfigParser()

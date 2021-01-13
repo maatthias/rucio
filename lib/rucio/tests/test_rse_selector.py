@@ -34,6 +34,8 @@ from rucio.core.rse_selector import RSESelector
 from rucio.db.sqla import session, models
 
 
+@pytest.mark.dirty
+@pytest.mark.noparallel(reason='uses pre-defined rses, deletes database content on setUp and tearDownClass')
 class TestRSESelectorInit(unittest.TestCase):
 
     @classmethod
@@ -133,6 +135,8 @@ class TestRSESelectorInit(unittest.TestCase):
         assert len(rse_selector.rses) == 1
 
 
+@pytest.mark.dirty
+@pytest.mark.noparallel(reason='uses pre-defined rses, deletes database content on setUp and tearDownClass')
 class TestRSESelectorDynamic(unittest.TestCase):
 
     @classmethod

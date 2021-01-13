@@ -25,9 +25,6 @@ import traceback
 import pytest
 
 
-# local imports in the fixtures to make this file loadable in e.g. client tests
-
-
 @pytest.fixture(scope='session')
 def vo():
     from rucio.common.config import config_get_bool, config_get
@@ -40,6 +37,7 @@ def vo():
 
 @pytest.fixture(scope='module')
 def replica_client():
+    # local imports to make this file loadable in all configurations
     from rucio.client.replicaclient import ReplicaClient
 
     return ReplicaClient()
@@ -47,6 +45,7 @@ def replica_client():
 
 @pytest.fixture(scope='module')
 def did_client():
+    # local imports to make this file loadable in all configurations
     from rucio.client.didclient import DIDClient
 
     return DIDClient()
@@ -58,6 +57,7 @@ def rest_client():
 
     backend = os.environ.get('REST_BACKEND', 'webpy')
     if backend == 'flask':
+        # local imports to make this file loadable in all configurations, e.g. client tests
         from flask.testing import FlaskClient
         from rucio.web.rest.flaskapi.v1.main import application
 
@@ -82,6 +82,7 @@ def rest_client():
         application.test_client_class = None
         application.testing = _testing
     elif backend == 'webpy':
+        # local imports to make this file loadable in all configurations, e.g. client tests
         from werkzeug.test import Client as TestClient
         from werkzeug.wrappers import BaseResponse
         from rucio.web.rest.main import application as main_application

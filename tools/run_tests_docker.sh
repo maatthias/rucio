@@ -47,7 +47,7 @@ do
     i) init_only="true";;
     r) activate_rse="true";;
     s) special="true";;
-    t) notrace="true";;
+    t) trace="true";;
     a) noalembic="true";;
   esac
 done
@@ -147,14 +147,14 @@ fi
 
 if test ${special}; then
     echo 'Using the special config and only running test_dirac'
-    python -bb -m pytest -vvvrxs lib/rucio/tests/test_dirac.py
+    tools/pytest.sh test_dirac.py
 else
     if test ${trace}; then
-	echo 'Running tests in verbose mode'
-	python -bb -m pytest -vvvrxs
+        echo 'Running tests in verbose mode'
+        tools/pytest.sh -vvv
     else
-	echo 'Running tests'
-	python -bb -m pytest -v --tb=short
+        echo 'Running tests'
+        tools/pytest.sh
     fi
 fi
 

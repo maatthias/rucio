@@ -25,6 +25,8 @@ import random
 import string
 import unittest
 
+import pytest
+
 from rucio.client.accountclient import AccountClient
 from rucio.client.accountlimitclient import AccountLimitClient
 from rucio.common.config import config_get, config_get_bool
@@ -36,6 +38,8 @@ from rucio.db.sqla import session, models
 from rucio.db.sqla.constants import AccountType
 
 
+@pytest.mark.dirty
+@pytest.mark.noparallel(reason='deletes database content on setUp and tearDownClass')
 class TestCoreAccountLimits(unittest.TestCase):
 
     @classmethod
@@ -132,6 +136,8 @@ class TestCoreAccountLimits(unittest.TestCase):
         assert len(results) == 0
 
 
+@pytest.mark.dirty
+@pytest.mark.noparallel(reason='deletes database content on setUp and tearDownClass')
 class TestAccountClient(unittest.TestCase):
 
     @classmethod

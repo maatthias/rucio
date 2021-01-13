@@ -24,6 +24,8 @@
 import os
 import unittest
 
+import pytest
+
 from rucio.client.uploadclient import UploadClient
 from rucio.common.config import config_get, config_get_bool
 from rucio.common.utils import generate_uuid
@@ -37,6 +39,7 @@ from rucio.db.sqla.session import get_session
 from rucio.tests.common import file_generator
 
 
+@pytest.mark.noparallel(reason='uses daemon, failing in parallel to other tests, updates account')
 class TestAbacusRSE(unittest.TestCase):
     account = 'root'
     scope = 'mock'

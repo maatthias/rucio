@@ -99,7 +99,7 @@ def setup_vo():
             add_vo(description='Test', email='rucio@email.com', **new_vo)
         return vo, new_vo
     else:
-        pytest.xfail(reason='multi_vo mode is not enabled. Running multi_vo tests in single_vo mode would result in failures.')
+        pytest.skip('multi_vo mode is not enabled. Running multi_vo tests in single_vo mode would result in failures.')
         return {}, {}
 
 

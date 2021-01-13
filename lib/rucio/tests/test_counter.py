@@ -25,6 +25,8 @@
 
 import unittest
 
+import pytest
+
 from rucio.common.config import config_get, config_get_bool
 from rucio.common.types import InternalAccount
 from rucio.core import account_counter, rse_counter
@@ -35,6 +37,7 @@ from rucio.daemons.abacus.rse import rse_update
 from rucio.db.sqla import session, models
 
 
+@pytest.mark.noparallel(reason='uses pre-defined RSE, fails when run in parallel')
 class TestCoreRSECounter(unittest.TestCase):
     def setUp(self):
         if config_get_bool('common', 'multi_vo', raise_exception=False, default=False):
@@ -101,6 +104,7 @@ class TestCoreRSECounter(unittest.TestCase):
             assert usage in current_usage
 
 
+@pytest.mark.noparallel(reason='uses pre-defined RSE, fails when run in parallel')
 class TestCoreAccountCounter(unittest.TestCase):
     def setUp(self):
         if config_get_bool('common', 'multi_vo', raise_exception=False, default=False):

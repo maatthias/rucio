@@ -348,6 +348,7 @@ def test_delete_rse(vo, rest_client, auth_token):
     assert response.headers.get('ExceptionClass') == 'RSEOperationNotSupported'
 
 
+@pytest.mark.noparallel(reason='uses pre-defined RSE, fails when run in parallel')
 class TestRSEClient(unittest.TestCase):
 
     def setUp(self):

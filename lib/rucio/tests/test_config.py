@@ -101,7 +101,6 @@ class TestConfigClients(unittest.TestCase):
     def tearDown(self):
         self.c = None
 
-    @pytest.mark.xfail(reason='ConfigClient bug https://github.com/rucio/rucio/issues/3916')
     def test_get_config_all(self):
         """ CONFIG (CLIENT): Retrieve configuration values and check for correctness """
         tmp = self.c.get_config(None, None)

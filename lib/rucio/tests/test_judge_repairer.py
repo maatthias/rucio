@@ -25,6 +25,7 @@
 
 import unittest
 
+import pytest
 from dogpile.cache import make_region
 from hashlib import sha256
 
@@ -48,6 +49,8 @@ from rucio.tests.common import rse_name_generator
 from rucio.tests.test_rule import create_files, tag_generator
 
 
+@pytest.mark.dirty
+@pytest.mark.noparallel(reason='uses pre-defined rses, sets rse attributes, sets account limits')
 class TestJudgeRepairer(unittest.TestCase):
 
     @classmethod

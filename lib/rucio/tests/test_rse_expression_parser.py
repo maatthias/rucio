@@ -47,6 +47,7 @@ def attribute_name_generator(size=10):
     return ''.join(choice(ascii_uppercase)).join(choice(ascii_lowercase) for x in range(size - 1))
 
 
+@pytest.mark.noparallel(reason='test_all_rse fails when run in parallel')
 class TestRSEExpressionParserCore(unittest.TestCase):
 
     def setUp(self):

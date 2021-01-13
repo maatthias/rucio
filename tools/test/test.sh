@@ -34,15 +34,13 @@ elif [[ "$SUITE" =~ ^client.* ]]; then
     fi
 
     srchome
-    TEST_FILES="lib/rucio/tests/test_clients.py lib/rucio/tests/test_bin_rucio.py lib/rucio/tests/test_module_import.py"
-
     if [ "$SUITE" == "client" ]; then
-        python -bb -m pytest -vvvrxs $TEST_FILES
+        tools/pytest.sh test_clients.py test_bin_rucio.py test_module_import.py
     elif [ "$SUITE" == "client_syntax" ]; then
         CLIENT_BIN_FILES="bin/rucio bin/rucio-admin"
         export SYNTAX_PYLINT_ARGS="$(tools/test/ignoretool.py --pylint)"
         export SYNTAX_PYLINT_BIN_ARGS="$CLIENT_BIN_FILES"
-        export SYNTAX_FLAKE_ARGS="$(tools/test/ignoretool.py --flake8) $CLIENT_BIN_FILES $TEST_FILES"
+        export SYNTAX_FLAKE_ARGS="$(tools/test/ignoretool.py --flake8) $CLIENT_BIN_FILES lib/rucio/tests/test_clients.py lib/rucio/tests/test_bin_rucio.py lib/rucio/tests/test_module_import.py"
         tools/test/check_syntax.sh
     fi
 

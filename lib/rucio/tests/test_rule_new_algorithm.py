@@ -10,10 +10,13 @@
 #
 # PY3K COMPATIBLE
 
+import pytest
+
 from rucio.tests.test_rule import TestReplicationRuleCore
 import rucio.core.rule
 
 
+@pytest.mark.noparallel(reason='sets a global variable')
 class TestReplicationRuleCoreNewAlgorithm(TestReplicationRuleCore):
 
     @classmethod
