@@ -13,7 +13,7 @@
 # limitations under the License.
 #
 # Authors:
-# - John Doe <john.doe@asdf.com>, 2020
+# - Matt Snyder <msnyder@bnl.gov>, 2021
 
 ''' adding transfertool column to requests table '''
 
