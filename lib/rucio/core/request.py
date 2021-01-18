@@ -42,7 +42,7 @@ from sqlalchemy import and_, or_, func, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql.expression import asc, false, true
 
-from rucio.common.config import config_get_bool
+from rucio.common.config import config_get, config_get_bool
 from rucio.common.exception import RequestNotFound, RucioException, UnsupportedOperation, ConfigNotFound
 from rucio.common.types import InternalAccount, InternalScope
 from rucio.common.utils import generate_uuid, chunks, get_parsed_throttler_mode
@@ -320,6 +320,13 @@ def get_next(request_type, state, limit=100, older_than=None, rse_id=None, activ
             query = query.filter(models.Request.activity == share)
         elif activity:
             query = query.filter(models.Request.activity == activity)
+
+        # if conveyor configured for preparer third-party copy then filter queued requests by transfertool for conveyor-submitter daemon
+        preparer_enabled = config_get_bool('conveyor', 'use_preparer', raise_exception=False, default=False)
+        TRANSFER_TOOL = config_get('conveyor', 'transfertool', False, None)
+        if preparer_enabled:
+            query = query.filter(models.Request.transfertool == TRANSFER_TOOL)
+
 
         query = filter_thread_work(session=session, query=query, total_threads=total_workers, thread_id=worker_number, hash_variable=hash_variable)
 

@@ -53,7 +53,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql.expression import false
 
 from rucio.common import constants
-from rucio.common.config import config_get
+from rucio.common.config import config_get, config_get_bool
 from rucio.common.constants import SUPPORTED_PROTOCOLS
 from rucio.common.exception import (InvalidRSEExpression, NoDistance,
                                     RequestNotFound, RSEProtocolNotSupported,
@@ -1327,6 +1327,11 @@ def __list_transfer_requests_and_source_replicas(total_workers=0, worker_number=
 
     if activity:
         sub_requests = sub_requests.filter(models.Request.activity == activity)
+
+    # if conveyor configured for preparer third-party copy then filter queued requests by transfertool for conveyor-submitter daemon
+    preparer_enabled = config_get_bool('conveyor', 'use_preparer', raise_exception=False, default=False)
+    if preparer_enabled and request_state == RequestState.QUEUED:
+        sub_requests = sub_requests.filter(models.Request.transfertool == TRANSFER_TOOL)
 
     sub_requests = filter_thread_work(session=session, query=sub_requests, total_threads=total_workers, thread_id=worker_number, hash_variable='requests.id')
 
