@@ -28,6 +28,7 @@
 # - Andrew Lister <andrew.lister@stfc.ac.uk>, 2019
 # - Brandon White <bjwhite@fnal.gov>, 2019
 # - Benedikt Ziemons <benedikt.ziemons@cern.ch>, 2020-2021
+# - Matt Snyder <msnyder@bnl.gov>, 2021
 
 import datetime
 import json
