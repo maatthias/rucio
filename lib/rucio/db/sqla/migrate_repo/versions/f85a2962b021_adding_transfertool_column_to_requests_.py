@@ -33,7 +33,7 @@ def upgrade():
     '''
 
     if context.get_context().dialect.name in ['oracle', 'postgresql', 'mysql']:
-        schema = context.get_context().version_table_schema + '.' if context.get_context().version_table_schema else ''
+        schema = context.get_context().version_table_schema if context.get_context().version_table_schema else ''
         add_column('requests', sa.Column('transfertool', sa.String(64)), schema=schema)
 
 
@@ -43,5 +43,5 @@ def downgrade():
     '''
 
     if context.get_context().dialect.name in ['oracle', 'postgresql', 'mysql']:
-        schema = context.get_context().version_table_schema + '.' if context.get_context().version_table_schema else ''
+        schema = context.get_context().version_table_schema if context.get_context().version_table_schema else ''
         drop_column('requests', 'transfertool', schema=schema)
