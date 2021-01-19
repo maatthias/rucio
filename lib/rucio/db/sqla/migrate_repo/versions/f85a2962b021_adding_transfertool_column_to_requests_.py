@@ -20,7 +20,7 @@
 import sqlalchemy as sa
 
 from alembic import context
-from alembic.op import execute
+from alembic.op import add_column, drop_column
 
 # Alembic revision identifiers
 revision = 'f85a2962b021'
