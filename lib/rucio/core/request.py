@@ -324,10 +324,9 @@ def get_next(request_type, state, limit=100, older_than=None, rse_id=None, activ
 
         # if conveyor configured for preparer third-party copy then filter queued requests by transfertool for conveyor-submitter daemon
         preparer_enabled = config_get_bool('conveyor', 'use_preparer', raise_exception=False, default=False)
-        TRANSFER_TOOL = config_get('conveyor', 'transfertool', False, None)
+        transfertool_config = config_get('conveyor', 'transfertool', False, None)
         if preparer_enabled:
-            query = query.filter(models.Request.transfertool == TRANSFER_TOOL)
-
+            query = query.filter(models.Request.transfertool == transfertool_config)
 
         query = filter_thread_work(session=session, query=query, total_threads=total_workers, thread_id=worker_number, hash_variable=hash_variable)
 
