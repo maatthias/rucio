@@ -307,11 +307,17 @@ def get_next(request_type, state, limit=100, older_than=None, rse_id=None, activ
 
     for share in activity_shares:
 
-        query = session.query(models.Request).with_hint(models.Request, "INDEX(REQUESTS REQUESTS_TYP_STA_UPD_IDX)", 'oracle')\
-                                             .filter(models.Request.state.in_(state))\
-                                             .filter(models.Request.request_type.in_(request_type))\
-                                             .filter(models.Request.transfertool == transfertool)\
-                                             .order_by(asc(models.Request.updated_at))
+        if transfertool:
+            query = session.query(models.Request).with_hint(models.Request, "INDEX(REQUESTS REQUESTS_TYP_STA_TRANS_ACT_IDX)", 'oracle')\
+                                                 .filter(models.Request.state.in_(state))\
+                                                 .filter(models.Request.request_type.in_(request_type))\
+                                                 .filter(models.Request.transfertool == transfertool)\
+                                                 .order_by(asc(models.Request.updated_at))
+        else:
+            query = session.query(models.Request).with_hint(models.Request, "INDEX(REQUESTS REQUESTS_TYP_STA_UPD_IDX)", 'oracle')\
+                                                 .filter(models.Request.state.in_(state))\
+                                                 .filter(models.Request.request_type.in_(request_type))\
+                                                 .order_by(asc(models.Request.updated_at))
 
         if isinstance(older_than, datetime.datetime):
             query = query.filter(models.Request.updated_at < older_than)
