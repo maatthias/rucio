@@ -28,6 +28,7 @@
 # - Eli Chadwick <eli.chadwick@stfc.ac.uk>, 2020
 # - James Perry <j.perry@epcc.ed.ac.uk>, 2020
 # - Benedikt Ziemons <benedikt.ziemons@cern.ch>, 2020-2021
+# - Matt Snyder <msnyder@bnl.gov>, 2021
 
 import datetime
 import sys

@@ -24,7 +24,7 @@
 # - Joaquín Bogado <jbogado@linti.unlp.edu.ar>, 2016
 # - dciangot <diego.ciangottini@cern.ch>, 2018
 # - Hannes Hansen <hannes.jakob.hansen@cern.ch>, 2018-2019
-# - maatthias <maatthias@gmail.com>, 2019
+# - Matt Snyder <msnyder@bnl.gov>, 2019-2021
 # - Brandon White <bjwhite@fnal.gov>, 2019
 # - Thomas Beermann <thomas.beermann@cern.ch>, 2020
 # - Nick Smith <nick.smith@cern.ch>, 2020

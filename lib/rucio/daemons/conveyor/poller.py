@@ -20,7 +20,7 @@
 # - Wen Guan <wen.guan@cern.ch>, 2014-2016
 # - Martin Barisits <martin.barisits@cern.ch>, 2016-2020
 # - Hannes Hansen <hannes.jakob.hansen@cern.ch>, 2018
-# - maatthias <maatthias@gmail.com>, 2019
+# - Matt Snyder <msnyder@bnl.gov>, 2019-2021
 # - Brandon White <bjwhite@fnal.gov>, 2019
 # - Nick Smith <nick.smith@cern.ch>, 2020
 # - Thomas Beermann <thomas.beermann@cern.ch>, 2020
