@@ -97,11 +97,14 @@ def finisher(once=False, sleep_time=60, activities=None, bulk=100, db_bulk=1000)
     logging.debug("Suspicious patterns: %s" % [pat.pattern for pat in suspicious_patterns])
 
     retry_protocol_mismatches = conveyor_config.get('retry_protocol_mismatches', False)
+    transfertool = config_get('conveyor', 'transfertool', False, None)
 
     executable = 'conveyor-finisher'
     if activities:
         activities.sort()
         executable += '--activities ' + str(activities)
+    if transfertool:
+        executable += ' --transfertool ' + transfertool
     hostname = socket.getfqdn()
     pid = os.getpid()
     hb_thread = threading.current_thread()
@@ -135,7 +138,8 @@ def finisher(once=False, sleep_time=60, activities=None, bulk=100, db_bulk=1000)
                                              total_workers=heart_beat['nr_threads'],
                                              worker_number=heart_beat['assign_thread'],
                                              mode_all=True,
-                                             hash_variable='rule_id')
+                                             hash_variable='rule_id',
+                                             transfertool=transfertool)
                 record_timer('daemons.conveyor.finisher.000-get_next', (time.time() - time1) * 1000)
                 time2 = time.time()
                 if reqs:

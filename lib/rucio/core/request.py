@@ -268,7 +268,7 @@ def queue_requests(requests, session=None):
 @read_session
 def get_next(request_type, state, limit=100, older_than=None, rse_id=None, activity=None,
              total_workers=0, worker_number=0, mode_all=False, hash_variable='id',
-             activity_shares=None, session=None):
+             activity_shares=None, session=None, transfertool=None):
     """
     Retrieve the next requests matching the request type and state.
     Workers are balanced via hashing to reduce concurrency on database.
@@ -285,6 +285,7 @@ def get_next(request_type, state, limit=100, older_than=None, rse_id=None, activ
     :param hash_variable:     The variable to use to perform the partitioning. By default it uses the request id.
     :param activity_shares:   Activity shares dictionary, with number of requests
     :param session:           Database session to use.
+    :transfertool:            The transfer tool as specified in rucio.cfg.
     :returns:                 Request as a dictionary.
     """
 
@@ -309,6 +310,7 @@ def get_next(request_type, state, limit=100, older_than=None, rse_id=None, activ
         query = session.query(models.Request).with_hint(models.Request, "INDEX(REQUESTS REQUESTS_TYP_STA_UPD_IDX)", 'oracle')\
                                              .filter(models.Request.state.in_(state))\
                                              .filter(models.Request.request_type.in_(request_type))\
+                                             .filter(models.Request.transfertool == transfertool)\
                                              .order_by(asc(models.Request.updated_at))
 
         if isinstance(older_than, datetime.datetime):
@@ -321,12 +323,6 @@ def get_next(request_type, state, limit=100, older_than=None, rse_id=None, activ
             query = query.filter(models.Request.activity == share)
         elif activity:
             query = query.filter(models.Request.activity == activity)
-
-        # if conveyor configured for preparer third-party copy then filter queued requests by transfertool for conveyor-submitter daemon
-        preparer_enabled = config_get_bool('conveyor', 'use_preparer', raise_exception=False, default=False)
-        transfertool_config = config_get('conveyor', 'transfertool', False, None)
-        if preparer_enabled:
-            query = query.filter(models.Request.transfertool == transfertool_config)
 
         query = filter_thread_work(session=session, query=query, total_threads=total_workers, thread_id=worker_number, hash_variable=hash_variable)
 

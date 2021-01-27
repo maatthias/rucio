@@ -94,6 +94,8 @@ def poller(once=False, activities=None, sleep_time=60,
     if activity_shares:
         activities.sort()
         executable += '--activity_shares' + str(activity_shares)
+    if TRANSFER_TOOL:
+        executable += ' --transfertool ' + TRANSFER_TOOL
 
     hostname = socket.getfqdn()
     pid = os.getpid()
@@ -133,7 +135,8 @@ def poller(once=False, activities=None, sleep_time=60,
                                                 total_workers=heart_beat['nr_threads'], worker_number=heart_beat['assign_thread'],
                                                 mode_all=False, hash_variable='id',
                                                 activity=activity,
-                                                activity_shares=activity_shares)
+                                                activity_shares=activity_shares,
+                                                transfertool=TRANSFER_TOOL)
 
                 record_timer('daemons.conveyor.poller.000-get_next', (time.time() - start_time) * 1000)
 

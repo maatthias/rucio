@@ -1177,7 +1177,8 @@ class Request(BASE, ModelBase, Versioned):
                    Index('REQUESTS_TYP_STA_UPD_IDX', 'request_type', 'state', 'activity'),
                    Index('REQUESTS_RULEID_IDX', 'rule_id'),
                    Index('REQUESTS_EXTERNALID_UQ', 'external_id'),
-                   Index('REQUESTS_DEST_RSE_ID_IDX', 'dest_rse_id'))
+                   Index('REQUESTS_DEST_RSE_ID_IDX', 'dest_rse_id'),
+                   Index('REQUESTS_TYP_STA_TRANS_ACT_IDX', 'request_type', 'state', 'transfertool'))
 
 
 class Source(BASE, ModelBase, Versioned):

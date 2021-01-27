@@ -127,6 +127,8 @@ def submitter(once=False, rses=None, mock=False,
     if activities:
         activities.sort()
         executable += '--activities ' + str(activities)
+    if TRANSFER_TOOL:
+        executable += ' --transfertool ' + TRANSFER_TOOL
 
     hostname = socket.getfqdn()
     pid = os.getpid()
@@ -175,7 +177,8 @@ def submitter(once=False, rses=None, mock=False,
                                             mock=mock,
                                             max_sources=max_sources,
                                             bring_online=bring_online,
-                                            retry_other_fts=retry_other_fts)
+                                            retry_other_fts=retry_other_fts,
+                                            transfertool=TRANSFER_TOOL)
                 record_timer('daemons.conveyor.transfer_submitter.get_transfers.per_transfer', (time.time() - start_time) * 1000 / (len(transfers) if transfers else 1))
                 record_counter('daemons.conveyor.transfer_submitter.get_transfers', len(transfers))
                 GET_TRANSFERS_COUNTER.inc(len(transfers))
@@ -316,7 +319,7 @@ def run(once=False, group_bulk=1, group_policy='rule', mock=False,
 
 def __get_transfers(total_workers=0, worker_number=0, failover_schemes=None, limit=None, activity=None, older_than=None,
                     rses=None, schemes=None, mock=False, max_sources=4, bring_online=43200,
-                    retry_other_fts=False):
+                    retry_other_fts=False, transfertool=None):
     """
     Get transfers to process
 
@@ -332,6 +335,7 @@ def __get_transfers(total_workers=0, worker_number=0, failover_schemes=None, lim
     :param max_sources:      Max sources.
     :bring_online:           Bring online timeout.
     :retry_other_fts:        Retry other fts servers if needed
+    :transfertool:           The transfer tool as specified in rucio.cfg
     :returns:                List of transfers
     """
 
@@ -344,7 +348,8 @@ def __get_transfers(total_workers=0, worker_number=0, failover_schemes=None, lim
                                                                                                                                      schemes=schemes,
                                                                                                                                      bring_online=bring_online,
                                                                                                                                      retry_other_fts=retry_other_fts,
-                                                                                                                                     failover_schemes=failover_schemes)
+                                                                                                                                     failover_schemes=failover_schemes,
+                                                                                                                                     transfertool=transfertool)
     request_core.set_requests_state(reqs_no_source, RequestState.NO_SOURCES)
     request_core.set_requests_state(reqs_only_tape_source, RequestState.ONLY_TAPE_SOURCES)
     request_core.set_requests_state(reqs_scheme_mismatch, RequestState.MISMATCH_SCHEME)

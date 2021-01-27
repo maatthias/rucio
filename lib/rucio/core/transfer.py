@@ -627,7 +627,7 @@ def get_dsn(scope, name, dsn):
 
 @transactional_session
 def get_transfer_requests_and_source_replicas(total_workers=0, worker_number=0, limit=None, activity=None, older_than=None, rses=None, schemes=None,
-                                              bring_online=43200, retry_other_fts=False, failover_schemes=None, session=None):
+                                              bring_online=43200, retry_other_fts=False, failover_schemes=None, session=None, transfertool=None):
     """
     Get transfer requests and the associated source replicas
     :param total_workers:         Number of total workers.
@@ -641,6 +641,7 @@ def get_transfer_requests_and_source_replicas(total_workers=0, worker_number=0, 
     :parm retry_other_fts:        Retry other fts servers.
     :param failover_schemes:      Failover schemes.
     :session:                     The database session in use.
+    :transfertool:                The transfer tool as specified in rucio.cfg.
     :returns:                     transfers, reqs_no_source, reqs_scheme_mismatch, reqs_only_tape_source
     """
 
@@ -651,7 +652,8 @@ def get_transfer_requests_and_source_replicas(total_workers=0, worker_number=0, 
                                                                older_than=older_than,
                                                                rses=rses,
                                                                request_state=RequestState.QUEUED,
-                                                               session=session)
+                                                               session=session,
+                                                               transfertool=transfertool)
 
     unavailable_read_rse_ids = __get_unavailable_rse_ids(operation='read', session=session)
     unavailable_write_rse_ids = __get_unavailable_rse_ids(operation='write', session=session)
@@ -1285,7 +1287,7 @@ def get_transfer_requests_and_source_replicas(total_workers=0, worker_number=0, 
 
 @read_session
 def __list_transfer_requests_and_source_replicas(total_workers=0, worker_number=0, limit=None, activity=None,
-                                                 older_than=None, rses=None, request_state=None, session=None) -> "List[Tuple]":
+                                                 older_than=None, rses=None, request_state=None, session=None, transfertool=None) -> "List[Tuple]":
     """
     List requests with source replicas
     :param total_workers:     Number of total workers.
@@ -1295,6 +1297,7 @@ def __list_transfer_requests_and_source_replicas(total_workers=0, worker_number=
     :param older_than:       Only select requests older than this DateTime.
     :param rses:             List of rse_id to select requests.
     :param session:          Database session to use.
+    :param transfertool:     The transfer tool as specified in rucio.cfg.
     :returns:                List.
     """
 
@@ -1317,6 +1320,7 @@ def __list_transfer_requests_and_source_replicas(total_workers=0, worker_number=
         .with_hint(models.Request, "INDEX(REQUESTS REQUESTS_TYP_STA_UPD_IDX)", 'oracle') \
         .filter(models.Request.state == request_state) \
         .filter(models.Request.request_type == RequestType.TRANSFER) \
+        .filter(models.Request.transfertool == transfertool) \
         .join(models.RSE, models.RSE.id == models.Request.dest_rse_id) \
         .filter(models.RSE.deleted == false()) \
         .filter(models.RSE.availability.in_((2, 3, 6, 7)))
@@ -1326,11 +1330,6 @@ def __list_transfer_requests_and_source_replicas(total_workers=0, worker_number=
 
     if activity:
         sub_requests = sub_requests.filter(models.Request.activity == activity)
-
-    # if conveyor configured for preparer third-party copy then filter queued requests by transfertool for conveyor-submitter daemon
-    preparer_enabled = config_get_bool('conveyor', 'use_preparer', raise_exception=False, default=False)
-    if preparer_enabled and request_state == RequestState.QUEUED:
-        sub_requests = sub_requests.filter(models.Request.transfertool == TRANSFER_TOOL)
 
     sub_requests = filter_thread_work(session=session, query=sub_requests, total_threads=total_workers, thread_id=worker_number, hash_variable='requests.id')
 
