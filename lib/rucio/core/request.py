@@ -285,7 +285,7 @@ def get_next(request_type, state, limit=100, older_than=None, rse_id=None, activ
     :param hash_variable:     The variable to use to perform the partitioning. By default it uses the request id.
     :param activity_shares:   Activity shares dictionary, with number of requests
     :param session:           Database session to use.
-    :transfertool:            The transfer tool as specified in rucio.cfg.
+    :param transfertool:      The transfer tool as specified in rucio.cfg.
     :returns:                 Request as a dictionary.
     """
 

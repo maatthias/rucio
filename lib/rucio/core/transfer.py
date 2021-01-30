@@ -640,8 +640,8 @@ def get_transfer_requests_and_source_replicas(total_workers=0, worker_number=0, 
     :param bring_online:          Bring online timeout.
     :parm retry_other_fts:        Retry other fts servers.
     :param failover_schemes:      Failover schemes.
-    :session:                     The database session in use.
-    :transfertool:                The transfer tool as specified in rucio.cfg.
+    :param session:               The database session in use.
+    :param transfertool:          The transfer tool as specified in rucio.cfg.
     :returns:                     transfers, reqs_no_source, reqs_scheme_mismatch, reqs_only_tape_source
     """
 
@@ -1320,7 +1320,6 @@ def __list_transfer_requests_and_source_replicas(total_workers=0, worker_number=
         .with_hint(models.Request, "INDEX(REQUESTS REQUESTS_TYP_STA_UPD_IDX)", 'oracle') \
         .filter(models.Request.state == request_state) \
         .filter(models.Request.request_type == RequestType.TRANSFER) \
-        .filter(models.Request.transfertool == transfertool) \
         .join(models.RSE, models.RSE.id == models.Request.dest_rse_id) \
         .filter(models.RSE.deleted == false()) \
         .filter(models.RSE.availability.in_((2, 3, 6, 7)))
@@ -1357,8 +1356,8 @@ def __list_transfer_requests_and_source_replicas(total_workers=0, worker_number=
                           models.RSEFileAssociation.path,
                           sub_requests.c.retry_count,
                           models.Source.url,
-                          models.Source.ranking,
-                          models.Distance.ranking) \
+                          models.Source.ranking.label("source_ranking"),
+                          models.Distance.ranking.label("distance_ranking")) \
         .outerjoin(models.RSEFileAssociation, and_(sub_requests.c.scope == models.RSEFileAssociation.scope,
                                                    sub_requests.c.name == models.RSEFileAssociation.name,
                                                    models.RSEFileAssociation.state == ReplicaState.AVAILABLE,
@@ -1372,6 +1371,15 @@ def __list_transfer_requests_and_source_replicas(total_workers=0, worker_number=
         .outerjoin(models.Distance, and_(sub_requests.c.dest_rse_id == models.Distance.dest_rse_id,
                                          models.RSEFileAssociation.rse_id == models.Distance.src_rse_id)) \
         .with_hint(models.Distance, "+ index(distances DISTANCES_PK)", 'oracle')
+
+    # if transfertool specified, select only the requests where the source rses are set up for the transfer tool
+    if transfertool:
+        query = query.subquery()
+        subq = session.query(query) \
+            .join(models.RSEAttrAssociation, models.RSEAttrAssociation.rse_id == query.c.rse_id) \
+            .filter(models.RSEAttrAssociation.key == 'transfertool',
+                    models.RSEAttrAssociation.value == transfertool)
+        return subq.all()
 
     if rses:
         result = []
