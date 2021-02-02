@@ -104,8 +104,6 @@ def finisher(once=False, sleep_time=60, activities=None, bulk=100, db_bulk=1000)
     if activities:
         activities.sort()
         executable += '--activities ' + str(activities)
-    if transfertool:
-        executable += ' --transfertool ' + transfertool
     hostname = socket.getfqdn()
     pid = os.getpid()
     hb_thread = threading.current_thread()

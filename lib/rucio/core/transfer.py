@@ -717,10 +717,14 @@ def get_transfer_requests_and_source_replicas(total_workers=0, worker_number=0, 
         # In case the source_rse and the dest_rse are connected, the list contains only the destination RSE
         # In case of non-connected, the list contains all the intermediary RSEs
         list_hops = []
+        include_multihop = core_config_get('transfers', 'use_multihop', default=False, expiration_time=600, session=session)
+        if transfertool:
+            include_multihop = False
+
         try:
             list_hops = get_hops(source_rse_id,
                                  dest_rse_id,
-                                 include_multihop=core_config_get('transfers', 'use_multihop', default=False, expiration_time=600, session=session),
+                                 include_multihop=include_multihop,
                                  multihop_rses=multihop_rses,
                                  limit_dest_schemes=transfers.get(req_id, {}).get('schemes', None),
                                  session=session)
@@ -1320,6 +1324,7 @@ def __list_transfer_requests_and_source_replicas(total_workers=0, worker_number=
         .with_hint(models.Request, "INDEX(REQUESTS REQUESTS_TYP_STA_UPD_IDX)", 'oracle') \
         .filter(models.Request.state == request_state) \
         .filter(models.Request.request_type == RequestType.TRANSFER) \
+        .filter(models.Request.transfertool == transfertool) \
         .join(models.RSE, models.RSE.id == models.Request.dest_rse_id) \
         .filter(models.RSE.deleted == false()) \
         .filter(models.RSE.availability.in_((2, 3, 6, 7)))
